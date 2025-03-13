@@ -3,12 +3,14 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from .models import Intern
+from .forms import InternAdminForm
 
 
 @admin.register(Intern)
 class InternAdmin(admin.ModelAdmin):
     list_display = ('full_name', 'email', 'position', 'download_link', 'download_nda_link')  # Добавляем кастомную колонку
     search_fields = ('full_name', 'email')
+    form = InternAdminForm
     exclude = ("created_at", "application_number")
     readonly_fields = ("created_at",)
 

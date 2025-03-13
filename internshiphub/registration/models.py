@@ -8,6 +8,7 @@ class Intern(models.Model):
     full_name = models.CharField(max_length=255, verbose_name="ФИО")
     position = models.CharField(max_length=255, verbose_name="Название позиции")
     address = models.CharField(max_length=255, verbose_name="Адрес")
+    birth_date = models.DateField("Дата рождения", null=True, blank=True)
     email = models.EmailField(verbose_name="Почта")
     contact_info = models.CharField(max_length=255, verbose_name="Контактные данные")
     internship_start = models.DateField(verbose_name="Начало стажировки")
@@ -18,7 +19,7 @@ class Intern(models.Model):
     application_number = models.CharField(max_length=50, unique=True, blank=True, null=True,
                                           verbose_name="Номер заявления")
     ID_doc = models.CharField(max_length=20, verbose_name="Номер документа")
-    INN = models.IntegerField(verbose_name="ИНН")
+    INN = models.CharField("ИНН", max_length=20, null=True, blank=True)
     authority = models.CharField(max_length=255, verbose_name="Орган выдачи")
     date_of_issue = models.DateField(verbose_name="Дата выдачи")
 
