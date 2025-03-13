@@ -61,6 +61,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # APPS
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
+    "jazzmin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -87,7 +88,8 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "internshiphub.users",
-    "internshiphub.intern",
+    "internshiphub.registration",
+    "internshiphub.keydev_reports",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
