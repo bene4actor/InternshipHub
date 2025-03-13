@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=my_proj_db
+POSTGRES_USER=my_proj
+POSTGRES_PASSWORD=my_proj
