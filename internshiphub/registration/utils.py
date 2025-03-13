@@ -60,7 +60,8 @@ def generate_nda(pk):
         raise ValueError("NDA не может быть сгенерирован, так как Заявление не подписано.")
 
     # Преобразуем fullname в безопасное имя файла
-    safe_fullname = slugify(data.get("full_name")) if data.get("full_name") else 'Без_имени'
+    safe_fullname = data.get("full_name").replace(' ', '_')
+    print(safe_fullname)
 
     # Путь к шаблону NDA
     nda_template_path = "internshiphub/media/keydev_reports/report_templates/NDA.docx"
@@ -79,7 +80,7 @@ def generate_nda(pk):
     nda_buffer.seek(0)
 
     # Формируем имя файла
-    nda_filename = f'NDA_{safe_fullname[:50]}.docx'
+    nda_filename = f'NDA_{safe_fullname}.docx'
     encode_filename = urllib.parse.quote(nda_filename)
 
     # Создаем HttpResponse для возврата файла
@@ -87,7 +88,7 @@ def generate_nda(pk):
         nda_buffer.getvalue(),
         content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
-    response["Content-Disposition"] = f'attachment; filename="{nda_filename}"'
+    response["Content-Disposition"] = f'attachment; filename="{encode_filename}"'
     return response
 
 # def generate_documents(intern):
