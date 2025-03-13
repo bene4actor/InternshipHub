@@ -13,6 +13,18 @@ class InternProxy(ProxyModelReportMixin, Intern):
 
     report_intern_full_name.verbose_name = 'full_name'
 
+    def report_intern_short_name(self):
+        full_name = self.full_name.split()
+        if len(full_name) == 3:
+            last_name = full_name[0]
+            first_initial = full_name[1][0]
+            middle_initial = full_name[2][0]
+            return f"{last_name} {first_initial}. {middle_initial}."
+        else:
+            return self.full_name
+
+    report_intern_short_name.verbose_name = 'short_name'
+
     def report_intern_address(self):
         return self.address
 
