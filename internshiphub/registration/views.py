@@ -20,3 +20,5 @@ def download_nda_document(request, intern_id):
     # Генерация документа
     response = generate_nda(intern_id)
     return response
+
+

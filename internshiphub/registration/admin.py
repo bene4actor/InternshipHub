@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-
+from ..keydev_reports.models import ReportTemplate
 from .models import Intern
 from .forms import InternAdminForm
 
@@ -26,4 +26,5 @@ class InternAdmin(admin.ModelAdmin):
             return format_html('<a href="{}">📄 Скачать NDA</a>', url)
         return "Заявление не подписано"
 
-    download_nda_link.short_description = 'NDA'
+
+

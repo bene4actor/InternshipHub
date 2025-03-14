@@ -3,7 +3,7 @@ from datetime import datetime
 
 from django import forms
 from django.core.exceptions import ValidationError
-
+from ..keydev_reports.models import ReportTemplate
 from .models import Intern
 
 
@@ -33,7 +33,7 @@ class InternAdminForm(forms.ModelForm):
 
         # Проверка на совпадение даты рождения из ИНН
         inn_birth_date = f'{inn[5:9]}-{inn[3:5]}-{inn[1:3]}'
-        print(inn_birth_date)
+
 
         try:
             inn_birth_date_obj = datetime.strptime(inn_birth_date, "%Y-%m-%d").date()
