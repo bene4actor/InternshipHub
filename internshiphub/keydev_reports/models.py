@@ -1,5 +1,5 @@
 from django.db import models
-
+import os
 
 class ReportTemplate(models.Model):
     """
@@ -18,3 +18,6 @@ class ReportTemplate(models.Model):
 
     def __str__(self):
         return self.name
+
+    def filename(self):
+        return os.path.basename(self.file.name)

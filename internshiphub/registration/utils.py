@@ -1,91 +1,61 @@
 import os
 import uuid
-import urllib.parse
-
+from urllib.parse import unquote,quote
+from django.shortcuts import get_object_or_404
 from io import BytesIO
 from django.http import HttpResponse
 from django.utils.text import slugify
 from pydantic import ValidationError
 from .proxy_models import InternProxy, Intern
-from ..keydev_reports.report_tools import WordEditor
+from internshiphub.keydev_reports.report_tools import WordEditor
+from internshiphub.keydev_reports.models import ReportTemplate
 
 
 
 
-
-def generate_documents(pk: int):
-    obj = InternProxy.proxy_objects.get_all_data().get(pk=pk)
-    data = obj.get_report_data()
-
-
-    # Генерация номера заявления, если его еще нет
-    # Убедитесь, что fullname не пустое
-    if data.get("full_name") is None:
-        data["full_name"] = 'Без_имени'  # Название по умолчанию, если fullname пустое
-    # Преобразуем fullname в безопасное имя файла
-    safe_fullname = data.get("full_name").replace(' ', '_')
-    template_path = "internshiphub/media/keydev_reports/report_templates/Заявление_на_стажировку.docx"
-
-    # Проверка существования шаблона
-    if not os.path.exists(template_path):
-        raise ValueError(f"Шаблон {template_path} не найден.")
-    # Создаем экземпляр редактора для документа
-
-    word_editor = WordEditor(file_name=template_path)
-    word_editor.docx_replace(**data)
-
-    # Генерация документа
-    docx_buffer = BytesIO()
-    word_editor.save(docx_buffer)
-    docx_buffer.seek(0)
-    # Отправляем файл пользователю для скачивания
-
-    filename = f'Заявление_{safe_fullname}.docx'
-    encode_filename = urllib.parse.quote(filename)
-    response = HttpResponse(
-        docx_buffer.getvalue(),
-        content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    )
-    response["Content-Disposition"] = f'attachment; filename="{encode_filename}"'
-    return response
-
-
-def generate_nda(pk):
+def generate_nda(pk, report_id):
     # загружаем данные из прокси модели
     obj = InternProxy.proxy_objects.get_all_data().get(pk=pk)
     data = obj.get_report_data()
+    report = get_object_or_404(ReportTemplate, pk=report_id)
+
+    #Убедитесь, что fullname не пустое
+    if data.get("full_name") is None:
+        data["full_name"] = 'Без_имени'  # Название по умолчанию, если fullname пустое
 
 
     # Проверяем, подписано ли Заявление
-    if not bool(data.get("is_application_signed")):
-        raise ValueError("NDA не может быть сгенерирован, так как Заявление не подписано.")
+
+    if not data.get("is_application_signed"):
+        raise ValueError(f"{report.name} не может быть сгенерирован, так как Заявление не подписано.")
 
     # Преобразуем fullname в безопасное имя файла
-    safe_fullname = data.get("full_name").replace(' ', '_')
+    safe_fullname = slugify(data.get("full_name"))
 
-    # Путь к шаблону NDA
-    nda_template_path = "internshiphub/media/keydev_reports/report_templates/NDA.docx"
-
+    # Путь к шаблону
+    template_path = report.file.path
+    filename = report.filename()
     # Проверка существования шаблона
-    if not os.path.exists(nda_template_path):
-        raise ValueError(f"Шаблон {nda_template_path} не найден.")
+    if not os.path.exists(template_path):
+        raise ValueError(f"Шаблон {template_path} не найден.")
 
     # Генерация NDA
-    nda_editor = WordEditor(file_name=nda_template_path)
-    nda_editor.docx_replace(**data)
+    doc_editor = WordEditor(file_name=template_path)
+    doc_editor.docx_replace(**data)
 
     # Сохраняем документ в BytesIO
-    nda_buffer = BytesIO()
-    nda_editor.save(nda_buffer)
-    nda_buffer.seek(0)
+    doc_buffer = BytesIO()
+    doc_editor.save(doc_buffer)
+    doc_buffer.seek(0)
 
     # Формируем имя файла
-    nda_filename = f'NDA_{safe_fullname}.docx'
-    encode_filename = urllib.parse.quote(nda_filename)
+    filename = f'{filename}_{safe_fullname[:50]}.docx'
+    encode_filename = quote(filename)
+
 
     # Создаем HttpResponse для возврата файла
     response = HttpResponse(
-        nda_buffer.getvalue(),
+        doc_buffer.getvalue(),
         content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
     response["Content-Disposition"] = f'attachment; filename="{encode_filename}"'
