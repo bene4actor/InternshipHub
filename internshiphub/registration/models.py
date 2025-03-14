@@ -1,6 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from ..keydev_reports.models import ReportTemplate
+
+
 # from .utils import generate_documents
 
 
@@ -22,6 +25,9 @@ class Intern(models.Model):
     INN = models.CharField("ИНН", max_length=20, null=True, blank=True)
     authority = models.CharField(max_length=255, verbose_name="Орган выдачи")
     date_of_issue = models.DateField(verbose_name="Дата выдачи")
+
+    # Связь с шаблонами отчетов
+    # reports = models.ManyToManyField(ReportTemplate, related_name='interns', verbose_name='Шаблоны отчетов')
 
 
     def __str__(self):

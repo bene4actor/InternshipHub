@@ -35,19 +35,19 @@ def generate_documents(pk: int):
     word_editor.docx_replace(**data)
 
     # Генерация документа
-    with BytesIO() as docx_buffer:
-        word_editor.save(docx_buffer)
-        docx_buffer.seek(0)
-        # Отправляем файл пользователю для скачивания
+    docx_buffer = BytesIO()
+    word_editor.save(docx_buffer)
+    docx_buffer.seek(0)
+    # Отправляем файл пользователю для скачивания
 
-        filename = f'Заявление_{safe_fullname}.docx'
-        encode_filename = urllib.parse.quote(filename)
-        response = HttpResponse(
-            docx_buffer.getvalue(),
-            content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        )
-        response["Content-Disposition"] = f'attachment; filename="{encode_filename}"'
-        return response
+    filename = f'Заявление_{safe_fullname}.docx'
+    encode_filename = urllib.parse.quote(filename)
+    response = HttpResponse(
+        docx_buffer.getvalue(),
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
+    response["Content-Disposition"] = f'attachment; filename="{encode_filename}"'
+    return response
 
 
 def generate_nda(pk):
@@ -55,13 +55,13 @@ def generate_nda(pk):
     obj = InternProxy.proxy_objects.get_all_data().get(pk=pk)
     data = obj.get_report_data()
 
+
     # Проверяем, подписано ли Заявление
-    if not data.get("is_application_signed"):
+    if not bool(data.get("is_application_signed")):
         raise ValueError("NDA не может быть сгенерирован, так как Заявление не подписано.")
 
     # Преобразуем fullname в безопасное имя файла
     safe_fullname = data.get("full_name").replace(' ', '_')
-    print(safe_fullname)
 
     # Путь к шаблону NDA
     nda_template_path = "internshiphub/media/keydev_reports/report_templates/NDA.docx"
