@@ -1,16 +1,19 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
+
 from internshiphub.keydev_reports.models import ReportTemplate
 from .models import Intern
 from urllib.parse import quote
 import os
+from .forms import InternAdminForm
 
 
 @admin.register(Intern)
 class InternAdmin(admin.ModelAdmin):
     list_display = ('full_name', 'email', 'position', 'download_link', )  # Добавляем кастомную колонку
     search_fields = ('full_name', 'email')
+    form = InternAdminForm
     exclude = ("created_at", "application_number")
     readonly_fields = ("created_at",)
 
@@ -47,4 +50,5 @@ class InternAdmin(admin.ModelAdmin):
         return format_html(dropdown_html)
 
     download_link.short_description = 'Reports'
+
 

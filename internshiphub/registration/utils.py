@@ -23,7 +23,9 @@ def generate_nda(pk, report_id):
     if data.get("full_name") is None:
         data["full_name"] = 'Без_имени'  # Название по умолчанию, если fullname пустое
 
+
     # Проверяем, подписано ли Заявление
+
     if not data.get("is_application_signed"):
         raise ValueError(f"{report.name} не может быть сгенерирован, так как Заявление не подписано.")
 
@@ -49,6 +51,7 @@ def generate_nda(pk, report_id):
     # Формируем имя файла
     filename = f'{filename}_{safe_fullname[:50]}.docx'
     encode_filename = quote(filename)
+
 
     # Создаем HttpResponse для возврата файла
     response = HttpResponse(

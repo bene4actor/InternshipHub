@@ -51,6 +51,8 @@ class ProxyModelReportMixin:
         for method in dir(self):
             if method.startswith('report_intern'):
                 report_data[getattr(self, method).verbose_name] = str(getattr(self, method)())
+                if getattr(self, method).verbose_name == "ID":
+                    print(str(getattr(self, method)()))
         return report_data
 
     def get_data(self, data: dict):
