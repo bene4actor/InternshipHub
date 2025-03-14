@@ -25,6 +25,7 @@ class InternAdmin(admin.ModelAdmin):
             url = reverse('download_nda', args=[obj.id])
             return format_html('<a href="{}">📄 Скачать NDA</a>', url)
         return "Заявление не подписано"
+    download_nda_link.short_description = 'NDA'
 
 
 
