@@ -59,7 +59,7 @@ class InternProxy(ProxyModelReportMixin, Intern):
     report_intern_report_app_number.verbose_name = 'app_number'
 
     def report_intern_report_id(self):
-        return self.ID_doc,
+        return self.ID_doc
 
     report_intern_report_id.verbose_name = 'ID'
 
